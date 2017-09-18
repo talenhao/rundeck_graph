@@ -1,0 +1,7 @@
+[RUNDECK]
+rundeck_server_ip: 192.168.1.1
+rundeck_server_port: 4440
+rundeck_server_protocol: http
+rundeck_project: jobs
+rundeck_token: Orav4naJ6aXJbaj9LaTguag7jataaJAa
+

@@ -21,7 +21,7 @@ python_requirements:
 
 graph:
   cmd.run:
-    - name: /usr/local/_python3.6.1/bin/python3.6 /usr/local/_python3.6.1/lib/python3.6/site-packages/rundeck_graph/test.py
+    - name: /usr/local/_python3.6.1/bin/python3.6 /usr/local/_python3.6.1/lib/python3.6/site-packages/rundeck_graph/test.py && cp -vf rundeck.gv.png /var/lib/rundeck/exp/webapp/images/
     - cwd: /usr/local/_rundeck_graph
     - require:
       - cmd: python_requirements

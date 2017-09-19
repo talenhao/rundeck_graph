@@ -121,7 +121,7 @@ def graph_dot(et_root):
                 imagepos='ml',
                 height='.2'
     )
-    rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
+    # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
     rd_pic.edge_attr.update(splines='compound', concentrate='true')
     for job in root:
         # 1.获取任务名
@@ -216,6 +216,7 @@ def graph_dot(et_root):
                                 )
                 else:
                     pLogger.debug("%r has not rd run", job_ref_rd_run.text)
+    rd_pic.node(name=create_time, shape='plaintext', pos="1, 1!", fontsize='10')
     return rd_pic
 
 

@@ -20,7 +20,6 @@ import requests
 import sys
 import time
 import xml.etree.ElementTree as ET
-# import json
 import configparser
 
 __author__ = "Talen Hao(天飞)<talenhao@gmail.com>"
@@ -36,7 +35,7 @@ from rundeck_graph.log4p import log4p
 
 SCRIPT_NAME = os.path.basename(__file__)
 pLogger = log4p.GetLogger(SCRIPT_NAME, logging.DEBUG).get_l()
-config_file = os.path.abspath('config.ini')
+config_file = os.path.dirname(os.path.abspath(__file__)) + '/config.ini'
 pLogger.debug("\n"*50)
 pLogger.debug("config file is {}".format(config_file))
 # log end <<
@@ -99,7 +98,8 @@ def get_jobs_export_xml_root():
     return root
 
 
-def main(et_root):
+def graph_dot(et_root):
+    root = et_root
     rd_pic = Digraph('rd', filename='rundeck.gv', format='png', comment='talen\'s rundeck graph')
     rd_pic.graph_attr['rankdir'] = 'LR'
     create_time = "Image create time : {} ".format(datetime.datetime.now().strftime('%Y-%m-%d,%H.%M'))
@@ -215,12 +215,16 @@ def main(et_root):
                                 splines='compound'
                                 )
                 else:
-                    pLogger.debug("%r havn't rd run", job_ref_rd_run.text)
+                    pLogger.debug("%r has not rd run", job_ref_rd_run.text)
+    return rd_pic
 
+
+def graph_render(graph):
     pLogger.info("Collect over, graphing image...")
-    rd_pic.render()
+    graph.render()
 
 
 if __name__ == "__main__":
     root = get_jobs_export_xml_root()
-    main(root)
+    graph = graph_dot(et_root=root)
+    graph_render(graph)

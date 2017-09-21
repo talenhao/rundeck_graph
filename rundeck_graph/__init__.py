@@ -98,9 +98,12 @@ def get_jobs_export_xml_root():
     return root
 
 
-def graph_dot(et_root):
+def graph_dot(et_root, **kwargs):
+    """
+    **kwargs in : name=None, comment=None, filename=None, directory=None, format=None, engine=None, encoding=None, graph_attr=None, node_attr=None, edge_attr=None, body=None, strict=False
+    """
     root = et_root
-    rd_pic = Digraph('rd', filename='rundeck.gv', format='png', comment='talen\'s rundeck graph')
+    rd_pic = Digraph(**kwargs)
     rd_pic.graph_attr['rankdir'] = 'LR'
     create_time = "Image create time : {} ".format(datetime.datetime.now().strftime('%Y-%m-%d,%H.%M'))
     rd_pic.graph_attr['label'] = create_time
@@ -227,5 +230,5 @@ def graph_render(graph):
 
 if __name__ == "__main__":
     root = get_jobs_export_xml_root()
-    graph = graph_dot(et_root=root)
+    graph = graph_dot(et_root=root, comment='rundeck graph', name='rd', filename='rundeck.gv', format='gif', engine='dot')
     graph_render(graph)

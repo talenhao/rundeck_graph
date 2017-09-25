@@ -74,7 +74,7 @@ pLogger.debug("{!r}, {!r}, {!r}, {!r}, {!r}".format(rundeck_server_ip, rundeck_s
 font_size = '9'
 
 today = datetime.date.fromtimestamp(time.time())
-pLogger.info("today is : %s", today)
+pLogger.info("today is : {!r}".format(today))
 
 
 def get_jobs_export_xml_root():
@@ -92,10 +92,11 @@ def get_jobs_export_xml_root():
     except OSError:
         pLogger.info("Network connect error!")
         exit()
-    jobs_xml_export = ET.fromstring(jobs_export.text)
-    root = jobs_xml_export
-    pLogger.debug("root tag: %r", root.tag)
-    return root
+    else:
+        jobs_xml_export = ET.fromstring(jobs_export.text)
+        root = jobs_xml_export
+        pLogger.debug("root tag: %r", root.tag)
+        return root
 
 
 def graph_dot(et_root, **kwargs):
@@ -119,11 +120,10 @@ def graph_dot(et_root, **kwargs):
                 overlap='false',
                 rank='source',
                 constraint='false',
-                clusterrank = 'none',
+                clusterrank='none',
                 center='false',
                 imagepos='ml',
-                height='.2'
-    )
+                height='.2')
     # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
     rd_pic.edge_attr.update(splines='compound', concentrate='true')
     for job in root:
@@ -134,7 +134,7 @@ def graph_dot(et_root, **kwargs):
         executionEnabled = job.find('executionEnabled').text
         pLogger.debug("job启用状态: %r", executionEnabled)
         if executionEnabled and executionEnabled == 'false':
-            pLogger.info("job %r 已经被禁用", job_name)
+            pLogger.info("job {!r} 已经被禁用".format(job_name))
             continue
 
         # 7.调度状态
@@ -143,7 +143,7 @@ def graph_dot(et_root, **kwargs):
 
         # rd_pic.node(job_name)
         # 3.分组信息
-        job_group = job.find('group').text# .replace('/', '_')
+        job_group = job.find('group').text  # .replace('/', '_')
 
         pLogger.debug("job group is : %r", job_group)
         pLogger.debug("job name is %r", job_name)
@@ -156,12 +156,12 @@ def graph_dot(et_root, **kwargs):
 
             if schedule is None:
                 group.node(job_name, fillcolor='orange:yellow', shape='box', style='filled',
-                           #gradientangle='90'
+                           # gradientangle='90'
                            )
                 node_stats = 'end'
             else:
                 group.node(job_name, fillcolor='green:yellow', shape='box', style='filled',
-                           #gradientangle='90'
+                           # gradientangle='90'
                            )
                 node_stats = 'start'
             pLogger.debug('node_stats _____________________________ %r ', node_stats)
@@ -196,14 +196,15 @@ def graph_dot(et_root, **kwargs):
                                 )
                 else:
                     rd_pic.edge(job_name, jobref_name,
-                               label="串行子步骤",
-                               labelfloat='true',
-                               # headlabel="串行子步骤",
-                               # taillabel="串行子步骤",
-                               style='dashed', color='blue', fontsize=font_size,
-                               concentrate='true',
-                               splines='compound'
-                               )
+                                label="串行子步骤",
+                                labelfloat='true',
+                                # headlabel="串行子步骤",
+                                # taillabel="串行子步骤",
+                                style='dashed',
+                                color='blue',
+                                fontsize=font_size,
+                                concentrate='true',
+                                splines='compound')
         # 5.jobrefs_rd_run
         job_ref_rd_runs = job.findall(".//exec")
         pLogger.debug("job_ref_rd_runs is %r", job_ref_rd_runs)
@@ -230,5 +231,10 @@ def graph_render(graph):
 
 if __name__ == "__main__":
     root = get_jobs_export_xml_root()
-    graph = graph_dot(et_root=root, comment='rundeck graph', name='rd', filename='rundeck.gv', format='gif', engine='dot')
+    graph = graph_dot(et_root=root,
+                      comment='rundeck graph',
+                      name='rd',
+                      filename='rundeck.gv',
+                      format='gif',
+                      engine='dot')
     graph_render(graph)

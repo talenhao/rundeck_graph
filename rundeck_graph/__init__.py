@@ -116,7 +116,7 @@ def graph_dot(et_root, **kwargs):
                 fontsize=font_size,
                 remincross='true', 
                 concentrate='fase',
-                compound='true',
+                # compound='true',
                 overlap='false',
                 rank='source',
                 constraint='false',
@@ -125,7 +125,11 @@ def graph_dot(et_root, **kwargs):
                 imagepos='ml',
                 height='.2')
     # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
-    rd_pic.edge_attr.update(splines='compound', concentrate='true')
+    rd_pic.edge_attr.update(splines='false',
+                            concentrate='true',
+                            decorate='true',  # 线标题加下划线,标注连接线.
+                            penwidth='2.0',  # 线的粗细.
+                            minlen='1')  # 线的最小长度
     for job in root:
         # 1.获取任务名
         job_name = job.find("name").text
@@ -150,7 +154,9 @@ def graph_dot(et_root, **kwargs):
         cluster_name = '_'.join(["cluster", job_group])
         pLogger.debug("cluster_name is %r", cluster_name)
         with rd_pic.subgraph(name=cluster_name) as group:
-            group.attr(style='filled', bgcolor='khaki')
+            group.attr(style='rounded',  # cluster外圈样式, dashed:虚线;filled:实线填充;rounded:环绕
+                       bgcolor='khaki',  # 背景色
+                       )
             group.attr(label=job_group,
                        fontsize=font_size, labeljust='l')
 
@@ -183,7 +189,7 @@ def graph_dot(et_root, **kwargs):
                     rd_pic.edge(job_name, runjob_jobref_name, "并行调用",
                                 headlable=job_name, color='red', fontsize=font_size,
                                 concentrate='true',
-                                splines='compound'
+                                splines='false'
                                 )
                 elif jobref_name == '基本数据拉取任务':
                     # runjob_jobref_name = jobref.find(".//arg").get('line')
@@ -192,7 +198,7 @@ def graph_dot(et_root, **kwargs):
                     rd_pic.edge(job_name, runjob_jobref_name, "数据操作",
                                 headlable=job_name, color='green', fontsize=font_size,
                                 concentrate='true',
-                                splines='compound'
+                                splines='false'
                                 )
                 else:
                     rd_pic.edge(job_name, jobref_name,
@@ -200,11 +206,11 @@ def graph_dot(et_root, **kwargs):
                                 labelfloat='true',
                                 # headlabel="串行子步骤",
                                 # taillabel="串行子步骤",
-                                style='dashed',
+                                # style='dashed',
                                 color='blue',
                                 fontsize=font_size,
                                 concentrate='true',
-                                splines='compound')
+                                splines='false')
         # 5.jobrefs_rd_run
         job_ref_rd_runs = job.findall(".//exec")
         pLogger.debug("job_ref_rd_runs is %r", job_ref_rd_runs)
@@ -216,7 +222,7 @@ def graph_dot(et_root, **kwargs):
                     rd_pic.edge(job_name, job_ref_rd_run_jobname,
                                 headlable=job_name, color='red', fontsize=font_size,
                                 concentrate='true',
-                                splines='compound'
+                                splines='false'
                                 )
                 else:
                     pLogger.debug("%r has not rd run", job_ref_rd_run.text)

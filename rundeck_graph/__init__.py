@@ -40,6 +40,18 @@ pLogger.debug("\n"*50)
 pLogger.debug("config file is {}".format(config_file))
 # log end <<
 
+try:
+    get_encode = sys.getdefaultencoding()
+except:
+    import sys
+    get_encode = sys.getdefaultencoding()
+finally:
+    if get_encode == 'ascii':
+        sys.setdefaultencoding('utf8')
+        pLogger.info("getdefaultencoding is {!r}, convert to utf8.".format(get_encode))
+    else:
+        pLogger.info("getdefaultencoding is {!r}".format(get_encode))
+
 
 def exception(e):
     pLogger.exception(e)
@@ -136,14 +148,14 @@ def graph_dot(et_root, **kwargs):
 
         # 2.禁用状态
         executionEnabled = job.find('executionEnabled').text
-        pLogger.debug("job启用状态: %r", executionEnabled)
+        pLogger.debug("job enabled status: %r", executionEnabled)
         if executionEnabled and executionEnabled == 'false':
-            pLogger.info("job {!r} 已经被禁用".format(job_name))
+            pLogger.info("job {!r} is disabled.".format(job_name))
             continue
 
         # 7.调度状态
         schedule = job.find('schedule')
-        pLogger.debug("Job调度启用状态:%r, type: %r", schedule, type(schedule))
+        pLogger.debug("Job schedule :%r, type: %r", schedule, type(schedule))
 
         # rd_pic.node(job_name)
         # 3.分组信息
@@ -194,7 +206,7 @@ def graph_dot(et_root, **kwargs):
                 elif jobref_name == '基本数据拉取任务':
                     # runjob_jobref_name = jobref.find(".//arg").get('line')
                     runjob_jobref_name = jobref_name
-                    pLogger.debug("基本数据拉取任务 is %r", runjob_jobref_name)
+                    pLogger.debug("BaseData is %r", runjob_jobref_name)
                     rd_pic.edge(job_name, runjob_jobref_name, "数据操作",
                                 headlable=job_name, color='green', fontsize=font_size,
                                 concentrate='true',

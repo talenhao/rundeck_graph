@@ -22,7 +22,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2017.9.25.10',
+    version='2017.9.25.11',
 
     description='collect rundeck jobs, use graphviz graph.',
     long_description=long_description,

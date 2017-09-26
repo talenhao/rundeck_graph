@@ -142,7 +142,7 @@ def graph_dot(et_root, **kwargs):
         executionEnabled = job.find('executionEnabled').text
         pLogger.debug("job enabled status: %r", executionEnabled)
         if executionEnabled and executionEnabled == 'false':
-            pLogger.info("job {!r} is disabled.".format(job_name))
+            pLogger.debug("job {!r} is disabled.".format(job_name))
             continue
 
         # 7.调度状态

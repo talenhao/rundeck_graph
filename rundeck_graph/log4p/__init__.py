@@ -7,9 +7,6 @@ import json
 import os
 
 __author__ = "Talen Hao(天飞)<talenhao@gmail.com>"
-__status__ = "product"
-__last_date__ = "2017.09.08"
-__version__ = __last_date__
 __create_date__ = "2017.08.21"
 
 current_path = os.path.dirname(__file__)

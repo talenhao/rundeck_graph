@@ -118,45 +118,48 @@ def graph_dot(et_root, **kwargs):
     """
     root = et_root
     rd_pic = Digraph(**kwargs)
-    rd_pic.graph_attr['rankdir'] = 'LR'
     create_time = "Image create time : {} ".format(datetime.datetime.now().strftime('%Y-%m-%d,%H.%M'))
-    rd_pic.graph_attr['label'] = create_time
-    rd_pic.graph_attr['labelloc'] = 't'
-    rd_pic.graph_attr['bgcolor'] = 'azure'
+    rd_pic.attr('graph',
+                rankdir='LR',
+                label=create_time,
+                labelloc='t',
+                bgcolor='azure',
+                # compound='true',
+                constraint='true',  # If false, the edge is not used in ranking the nodes.
+                rank='source',  # 等级
+                # concentrate='false',  # 共用线
+                # clusterrank='local',
+                overlap='true',
+                # center='false',
+                decorate='true',
+                # imagepos='ml',
+                ratio='auto',
+                )
     rd_pic.attr('node',
                 fontsize=font_size,
-                compound='true',
                 fillcolor='yellowgreen',  # 填充颜色
                 style='filled',  # 填充
                 shape='folder',  # node图标形状
-                # shape='octagon',
                 # orientation='rotate',
-                orientation='landscape',
-                ratio='compress',
                 fontname='DejaVu Sans Mono',  # 使用字体
                 remincross='true',
-                concentrate='false',  # 共用线
-                constraint='true',  # If false, the edge is not used in ranking the nodes.
-                overlap='false',
-                rank='source',  # 等级
-                clusterrank='none',
-                center='false',
-                imagepos='ml',
-                decorate='true',
                 fixedsize='false',  # 固定大小
-                height='.4',
+                # distortion='-100'
+                # height='.4',
                 # dim='10',  # Set the number of dimensions used for the layout. The maximum value allowed is 10.
                 # dimen='10',  # Set the number of dimensions used for rendering. The maximum value allowed is 10.
+                # splines='false',
                 )
     # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
-    rd_pic.edge_attr.update(splines='false',
-                            concentrate='false',
+    rd_pic.edge_attr.update(concentrate='false',
                             decorate='true',  # 线标题加下划线,标注连接线.
                             penwidth='1.5',  # 线的粗细.
-                            # minlen='1',  # 线的最小长度
+                            # minlen='3',  # 线的最小长度
                             fontsize=font_size,
                             fontname='DejaVu Sans Mono',  # 使用字体
-                            labelfloat='true'
+                            # labelfloat='true',
+                            # labeldistance='false',
+                            # labelangle='-25.0'
                             )
     for job in root:
         # 1.获取任务名

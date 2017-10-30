@@ -15,7 +15,7 @@
 -    节点连线显示上一层父任务名称,鼠标放在线上可以显示任务流向.
 
 ----
-![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/Screenshot_20170918_202156.png?raw=true)
-![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/Screenshot_20170918_202233.png?raw=true)
-![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/Screenshot_20170919_142124.png?raw=true)
+![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/img1.png?raw=true)
+![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/img2.png?raw=true)
+![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/img3.png?raw=true)
 ----

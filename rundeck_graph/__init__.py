@@ -17,18 +17,16 @@ import configparser
 __author__ = "Talen Hao(天飞)<talenhao@gmail.com>"
 __status__ = "product"
 __create_date__ = "2017.08.01"
-__last_date__ = "2017.09.18"
-__version__ = __last_date__
 
 # for log >>
 import logging
 import os
-from rundeck_graph import log4p
+import log4python
 
 SCRIPT_NAME = os.path.basename(__file__)
-pLogger = log4p.GetLogger(SCRIPT_NAME, logging.DEBUG).get_l()
+pLogger = log4python.GetLogger(SCRIPT_NAME, logging.DEBUG).get_l()
 config_file = os.path.dirname(os.path.abspath(__file__)) + '/config.ini'
-pLogger.debug("\n"*50)
+pLogger.debug("\n" * 50)
 pLogger.debug("config file is {}".format(config_file))
 # log end <<
 
@@ -73,7 +71,12 @@ rundeck_server_port = pyconfig.get('RUNDECK', 'rundeck_server_port')
 rundeck_server_protocol = pyconfig.get('RUNDECK', 'rundeck_server_protocol')
 rundeck_project = pyconfig.get('RUNDECK', 'rundeck_project')
 rundeck_token = pyconfig.get('RUNDECK', 'rundeck_token')
-pLogger.debug("{!r}, {!r}, {!r}, {!r}, {!r}".format(rundeck_server_ip, rundeck_server_port, rundeck_server_protocol, rundeck_project, rundeck_token))
+pLogger.debug("{!r}, {!r}, {!r}, {!r}, {!r}".format(
+    rundeck_server_ip,
+    rundeck_server_port,
+    rundeck_server_protocol,
+    rundeck_project,
+    rundeck_token))
 
 font_size = '9'
 
@@ -83,10 +86,15 @@ pLogger.info("today is : {!r}".format(today))
 
 def get_jobs_export_xml_root():
     """
-    curl -X GET  -H x-rundeck-auth-token:Orbv4nQJ6vXJboj9LKTguQg7j5taRJAx  http://192.168.1.228:4440/api/14/project/in-jobs/jobs/export
+    curl -X GET  -H x-rundeck-auth-token:Orbv4nQJ6vXJboj9LKTguQg7j5taRJAx\
+      http://192.168.1.228:4440/api/14/project/in-jobs/jobs/export
     :return:
     """
-    jobs_url_api = '%s://%s:%s/api/14/project/%s/jobs/export' % (rundeck_server_protocol, rundeck_server_ip, rundeck_server_port, rundeck_project)
+    jobs_url_api = '{}://{}:{}/api/14/project/{}/jobs/export'.format(
+        rundeck_server_protocol,
+        rundeck_server_ip,
+        rundeck_server_port,
+        rundeck_project)
     jobs_url_api_headers = {'x-rundeck-auth-token': rundeck_token}
     jobs_url_api_params = {}
     try:
@@ -105,7 +113,8 @@ def get_jobs_export_xml_root():
 
 def graph_dot(et_root, **kwargs):
     """
-    **kwargs in : name=None, comment=None, filename=None, directory=None, format=None, engine=None, encoding=None, graph_attr=None, node_attr=None, edge_attr=None, body=None, strict=False
+    **kwargs in : name=None, comment=None, filename=None, directory=None, format=None,\
+     engine=None, encoding=None, graph_attr=None, node_attr=None, edge_attr=None, body=None, strict=False
     """
     root = et_root
     rd_pic = Digraph(**kwargs)
@@ -113,31 +122,45 @@ def graph_dot(et_root, **kwargs):
     create_time = "Image create time : {} ".format(datetime.datetime.now().strftime('%Y-%m-%d,%H.%M'))
     rd_pic.graph_attr['label'] = create_time
     rd_pic.graph_attr['labelloc'] = 't'
-    rd_pic.attr('node', shape='box', style='filled',
+    rd_pic.graph_attr['bgcolor'] = 'azure'
+    rd_pic.attr('node',
+                fontsize=font_size,
+                compound='true',
+                fillcolor='yellowgreen',  # 填充颜色
+                style='filled',  # 填充
+                shape='folder',  # node图标形状
+                # shape='octagon',
                 # orientation='rotate',
                 orientation='landscape',
                 ratio='compress',
-                fontsize=font_size,
-                remincross='true', 
-                concentrate='fase',
-                # compound='true',
+                fontname='DejaVu Sans Mono',  # 使用字体
+                remincross='true',
+                concentrate='false',  # 共用线
+                constraint='true',  # If false, the edge is not used in ranking the nodes.
                 overlap='false',
-                rank='source',
-                constraint='false',
+                rank='source',  # 等级
                 clusterrank='none',
                 center='false',
                 imagepos='ml',
-                height='.2')
+                decorate='true',
+                fixedsize='false',  # 固定大小
+                height='.4',
+                # dim='10',  # Set the number of dimensions used for the layout. The maximum value allowed is 10.
+                # dimen='10',  # Set the number of dimensions used for rendering. The maximum value allowed is 10.
+                )
     # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
     rd_pic.edge_attr.update(splines='false',
-                            concentrate='true',
+                            concentrate='false',
                             decorate='true',  # 线标题加下划线,标注连接线.
-                            penwidth='2.0',  # 线的粗细.
-                            minlen='1')  # 线的最小长度
+                            penwidth='1.5',  # 线的粗细.
+                            # minlen='1',  # 线的最小长度
+                            fontsize=font_size,
+                            fontname='DejaVu Sans Mono',  # 使用字体
+                            labelfloat='true'
+                            )
     for job in root:
         # 1.获取任务名
         job_name = job.find("name").text
-
         # 2.禁用状态
         executionEnabled = job.find('executionEnabled').text
         pLogger.debug("job enabled status: %r", executionEnabled)
@@ -149,28 +172,39 @@ def graph_dot(et_root, **kwargs):
         schedule = job.find('schedule')
         pLogger.debug("Job schedule :%r, type: %r", schedule, type(schedule))
 
+        job_id = job.find('id').text
+        pLogger.debug("job id is {}".format(job_id))
+        node_url = '{}://{}:{}/project/in-jobs/job/show/{}'.format(
+            rundeck_server_protocol,
+            rundeck_server_ip,
+            rundeck_server_port,
+            job_id)
+        rd_pic.node(name=job_name,
+                    URL=node_url)
         # rd_pic.node(job_name)
         # 3.分组信息
         job_group = job.find('group').text  # .replace('/', '_')
-
         pLogger.debug("job group is : %r", job_group)
         pLogger.debug("job name is %r", job_name)
+
         cluster_name = '_'.join(["cluster", job_group])
         pLogger.debug("cluster_name is %r", cluster_name)
         with rd_pic.subgraph(name=cluster_name) as group:
-            group.attr(style='rounded',  # cluster外圈样式, dashed:虚线;filled:实线填充;rounded:环绕
-                       bgcolor='khaki',  # 背景色
+            group.attr(style='filled',  # cluster外圈样式, dashed:虚线;filled:实线填充;rounded:环绕
+                       bgcolor='cornsilk',  # 背景色
                        )
             group.attr(label=job_group,
-                       fontsize=font_size, labeljust='l')
+                       fontsize=str(int(font_size) + 4),
+                       fontname='DejaVu Sans Mono',  # 使用字体
+                       labeljust='l')
 
             if schedule is None:
-                group.node(job_name, fillcolor='orange:yellow', shape='box', style='filled',
-                           # gradientangle='90'
+                group.node(job_name, fillcolor='orange', style='filled',
+                           # gradientangle='90',
                            )
                 node_stats = 'end'
             else:
-                group.node(job_name, fillcolor='green:yellow', shape='box', style='filled',
+                group.node(job_name, fillcolor='green', style='filled',
                            # gradientangle='90'
                            )
                 node_stats = 'start'
@@ -191,30 +225,25 @@ def graph_dot(et_root, **kwargs):
                     runjob_jobref_name = jobref.find(".//arg").get('line').split('/')[-1]
                     pLogger.debug("runjob link to %r", runjob_jobref_name)
                     rd_pic.edge(job_name, runjob_jobref_name, "并行调用",
-                                headlable=job_name, color='red', fontsize=font_size,
-                                concentrate='true',
-                                splines='false'
+                                headlabel=job_name,
+                                color='red',
                                 )
                 elif jobref_name == '基本数据拉取任务':
                     # runjob_jobref_name = jobref.find(".//arg").get('line')
                     runjob_jobref_name = jobref_name
                     pLogger.debug("BaseData is %r", runjob_jobref_name)
                     rd_pic.edge(job_name, runjob_jobref_name, "数据操作",
-                                headlable=job_name, color='green', fontsize=font_size,
-                                concentrate='true',
-                                splines='false'
+                                headlabel=job_name,
+                                color='green',
                                 )
                 else:
                     rd_pic.edge(job_name, jobref_name,
                                 label="串行子步骤",
                                 labelfloat='true',
-                                # headlabel="串行子步骤",
-                                # taillabel="串行子步骤",
+                                headlabel=job_name,
                                 # style='dashed',
-                                color='blue',
-                                fontsize=font_size,
-                                concentrate='true',
-                                splines='false')
+                                color='blue'
+                                )
         # 5.jobrefs_rd_run
         job_ref_rd_runs = job.findall(".//exec")
         pLogger.debug("job_ref_rd_runs is %r", job_ref_rd_runs)
@@ -224,7 +253,7 @@ def graph_dot(et_root, **kwargs):
                     job_ref_rd_run_jobname = job_ref_rd_run.text.split('/')[-1]
                     pLogger.debug("%r has %r", job_ref_rd_run.text, job_ref_rd_run_jobname)
                     rd_pic.edge(job_name, job_ref_rd_run_jobname,
-                                headlable=job_name, color='red', fontsize=font_size,
+                                headlabel=job_name, color='red', fontsize=font_size,
                                 concentrate='true',
                                 splines='false'
                                 )
@@ -245,6 +274,6 @@ if __name__ == "__main__":
                       comment='rundeck graph',
                       name='rd',
                       filename='rundeck.gv',
-                      format='gif',
+                      format='svg',
                       engine='dot')
     graph_render(graph)

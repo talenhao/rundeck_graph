@@ -10,6 +10,9 @@
 -    调整配色,红色是独立禁用的任务
 - 20170918
 -    添加图片生成日期
+- 20171030
+-    图片node新增超链接,支持点击图片节点跳转到相应的任务界面.
+-    节点连线显示上一层父任务名称,鼠标放在线上可以显示任务流向.
 
 ----
 ![image](https://github.com/talenhao/rundeck_graph/blob/master/rundeck_graph/images/Screenshot_20170918_202156.png?raw=true)

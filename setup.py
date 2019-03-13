@@ -1,7 +1,7 @@
 """A setuptools based setup module.
 
 See:
-    https://github.com/talenhao/ServiceConnectEvolution
+    https://github.com/talenhao/rundeck_graph
 """
 
 # Always prefer setuptools over distutils
@@ -22,7 +22,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2017.10.30.23',
+    version='2017.11.03.27',
 
     description='collect rundeck jobs, use graphviz graph.',
     long_description=long_description,
@@ -72,7 +72,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['graphviz==0.8', 'requests==2.18.4'],
+    install_requires=['graphviz==0.8', 'requests==2.20.0'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,

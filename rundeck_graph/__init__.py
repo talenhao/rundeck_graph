@@ -136,10 +136,10 @@ def graph_dot(et_root, **kwargs):
                 ratio='auto',
                 )
     rd_pic.attr('node',
-                fontsize=font_size,
+                fontsize=str(int(font_size) + 2),
                 fillcolor='yellowgreen',  # 填充颜色
                 style='filled',  # 填充
-                shape='folder',  # node图标形状
+                # shape='folder',  # node图标形状
                 # orientation='rotate',
                 fontname='DejaVu Sans Mono',  # 使用字体
                 remincross='true',
@@ -151,13 +151,13 @@ def graph_dot(et_root, **kwargs):
                 # splines='false',
                 )
     # rd_pic.node_attr.update(fillcolor='red', style='filled', labeltooltip="注意!此任务已经被禁用")
-    rd_pic.edge_attr.update(concentrate='false',
-                            decorate='true',  # 线标题加下划线,标注连接线.
+    rd_pic.edge_attr.update(concentrate='true',
+                            # decorate='true',  # 线标题加下划线,标注连接线.
                             penwidth='1.5',  # 线的粗细.
-                            # minlen='3',  # 线的最小长度
-                            fontsize=font_size,
+                            # minlen='5',  # 线的最小长度
+                            fontsize=str(int(font_size) - 1),
                             fontname='DejaVu Sans Mono',  # 使用字体
-                            # labelfloat='true',
+                            labelfloat='true',
                             # labeldistance='false',
                             # labelangle='-25.0'
                             )
@@ -227,7 +227,7 @@ def graph_dot(et_root, **kwargs):
                     # 6.间接指向任务名
                     runjob_jobref_name = jobref.find(".//arg").get('line').split('/')[-1]
                     pLogger.debug("runjob link to %r", runjob_jobref_name)
-                    rd_pic.edge(job_name, runjob_jobref_name, "并行调用",
+                    rd_pic.edge(job_name, runjob_jobref_name, "call",
                                 headlabel=job_name,
                                 color='red',
                                 )
@@ -235,13 +235,13 @@ def graph_dot(et_root, **kwargs):
                     # runjob_jobref_name = jobref.find(".//arg").get('line')
                     runjob_jobref_name = jobref_name
                     pLogger.debug("BaseData is %r", runjob_jobref_name)
-                    rd_pic.edge(job_name, runjob_jobref_name, "数据操作",
+                    rd_pic.edge(job_name, runjob_jobref_name, "transport data",
                                 headlabel=job_name,
                                 color='green',
                                 )
                 else:
                     rd_pic.edge(job_name, jobref_name,
-                                label="串行子步骤",
+                                label="substep",
                                 labelfloat='true',
                                 headlabel=job_name,
                                 # style='dashed',
